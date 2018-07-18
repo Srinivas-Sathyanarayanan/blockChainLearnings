@@ -1,18 +1,25 @@
 //This is Splitter Contract to split the amount in to half sent from Alice to Bob & Carol
 pragma solidity ^0.4.19;
 contract Splitter{
-
+	
+	//state variables
+	address public owner;
 	mapping (address => uint) public balances;
-
+	
+	//events
 	event LogSenderBalance(address sender, uint amount);
 	event LogBalance(address receiverOne,uint recOneBal,address receiverTwo,uint recTwoBal);
-
-	function owned() public { owner = msg.sender; }
-  	  address owner;
-
-
 	
+	//modifiers
+	modifier onlyOwner {
+	  require(msg.sender == owner);
+	  _;
+	}
 
+
+	function Splitter() public { owner = msg.sender; }
+  	  
+  	  
 	function split(address receiverOne, address receiverTwo)  public  payable returns(bool isSuccessfull){
 	      	uint amt = msg.value;
 		//LogSenderBalance(msg.sender,msg.value);
@@ -37,8 +44,9 @@ contract Splitter{
 	
 	//Funds withdraw
 	function withdrawFunds() public {
+	   uint bal = balances[msg.sender];
 
-	    require(balances[msg.sender]>0);
+	    require(bal>0);
 	    uint amount = balances[msg.sender];
 
 	 
@@ -51,13 +59,10 @@ contract Splitter{
 	  }
 
 
-
-
-
 	//Self destruct function to be called only by owner
-  	function kill() public{ 
-		if (msg.sender == owner) selfdestruct(owner);
-		 }
+  	function kill() public onlyOwner(){ 
+		 selfdestruct(owner);
+  	}
 	
 }
 
