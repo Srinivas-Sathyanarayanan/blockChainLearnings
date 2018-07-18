@@ -11,6 +11,13 @@ contract Splitter{
 	event LogBalance(address receiverOne,uint recOneBal,address receiverTwo,uint recTwoBal);
 	
 	//modifiers
+	// The contract here will only define a modifier but will not 
+	// use it - derived contracts are going to utilize it.
+	// The body of the function is inserted where the special 
+	// symbol "_;" in the modifier's definition appears.
+	// That means that when the owner will call this function, 
+	// the function will get executed and otherwise, an exception 
+	// will be thrown.
 	modifier onlyOwner {
 	  require(msg.sender == owner);
 	  _;
