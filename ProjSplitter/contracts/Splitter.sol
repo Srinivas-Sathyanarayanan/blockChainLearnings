@@ -2,38 +2,49 @@
 pragma solidity ^0.4.19;
 contract Splitter{
 
+	mapping (address => uint) public balances;
+
+	event LogSenderBalance(address sender, uint amount);
+	event LogBalance(address receiverOne,uint recOneBal,address receiverTwo,uint recTwoBal);
+
 	function owned() public { owner = msg.sender; }
   	  address owner;
 
 
-	mapping (address => uint) public addresses;
+	
 
 	function split(address receiverOne, address receiverTwo)  public  payable returns(bool isSuccessfull){
-	      
-		require(msg.value>0);
+	      	uint amt = msg.value;
+		//LogSenderBalance(msg.sender,msg.value);
+		LogSenderBalance(owner,amt);
+		require(amt > 0);
 		
 		uint remAmt = msg.value % 2;
 		uint splitAmt = (msg.value - remAmt) / 2;
 
 		if (remAmt > 0){
-			addresses[owner] += remAmt;}
+			balances[owner] += remAmt;}
 
-		addresses[receiverOne] += splitAmt;
+		balances[receiverOne] += splitAmt;
 		
-		addresses[receiverTwo] += splitAmt;
+		balances[receiverTwo] += splitAmt;
+
+		LogBalance(receiverOne,balances[receiverOne],receiverTwo,balances[receiverTwo]);	
 
 		return true;
 	
 	}
 	
-//Funds withdraw
+	//Funds withdraw
 	function withdrawFunds() public {
 
-	    require(addresses[msg.sender]>0);
-	    uint amount = addresses[msg.sender];
+	    require(balances[msg.sender]>0);
+	    uint amount = balances[msg.sender];
 
 	 
-	    addresses[msg.sender] = 0;
+	    balances[msg.sender] = 0;
+
+	    LogSenderBalance(msg.sender,msg.value);
 	  
 	    msg.sender.transfer(amount);
 
