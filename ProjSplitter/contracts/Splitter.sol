@@ -7,8 +7,7 @@ contract Splitter{
 	mapping (address => uint) public balances;
 	
 	//events
-	event LogSenderBalance(address sender, uint amount);
-	event LogBalance(address receiverOne,uint recOneBal,address receiverTwo,uint recTwoBal);
+	event LogSplitFunds(address owner, uint amount,address receiverOne,uint recOneBal,address receiverTwo,uint recTwoBal);
 	
 	//modifiers
 	// The contract here will only define a modifier but will not 
@@ -30,7 +29,6 @@ contract Splitter{
 	function split(address receiverOne, address receiverTwo)  public  payable returns(bool isSuccessfull){
 	      	uint amt = msg.value;
 		//LogSenderBalance(msg.sender,msg.value);
-		LogSenderBalance(owner,amt);
 		require(amt > 0);
 		
 		uint remAmt = msg.value % 2;
@@ -43,7 +41,7 @@ contract Splitter{
 		
 		balances[receiverTwo] += splitAmt;
 
-		LogBalance(receiverOne,balances[receiverOne],receiverTwo,balances[receiverTwo]);	
+		LogSplitFunds(owner,balances[owner],receiverOne,balances[receiverOne],receiverTwo,balances[receiverTwo]);	
 
 		return true;
 	
@@ -54,14 +52,10 @@ contract Splitter{
 	   uint bal = balances[msg.sender];
 
 	    require(bal>0);
-	    uint amount = balances[msg.sender];
-
-	 
+	    
 	    balances[msg.sender] = 0;
-
-	    LogSenderBalance(msg.sender,msg.value);
 	  
-	    msg.sender.transfer(amount);
+	    msg.sender.transfer(bal);
 
 	  }
 
